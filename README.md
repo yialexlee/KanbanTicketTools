@@ -1,6 +1,9 @@
 # Kanban Ticket Management Tool
 
-![image](https://github.com/yialexlee/yialexlee.github.io/blob/master/images/work/work8.png)
+![image](https://github.com/yialexlee/KanbanTools/blob/master/images/main.png)
+![image](https://github.com/yialexlee/KanbanTools/blob/master/images/add.png)
+![image](https://github.com/yialexlee/KanbanTools/blob/master/images/cn.png)
+![image](https://github.com/yialexlee/KanbanTools/blob/master/images/light.png)
 
 ## Setup
 ```
