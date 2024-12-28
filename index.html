@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交接小工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button id="darkModeToggle" class="dark-mode-toggle">
+        <span class="toggle-icon">🌞</span>
+    </button>
+    <h1>交接小工具</h1>
+
+    <!-- Add Task Button -->
+<!-- Add this after the h1 tag -->
+    <div class="button-group">
+        <button id="addTaskBtn" class="add-task-btn">Add Task</button>
+        <button id="backupBtn" class="backup-btn">Backup Data</button>
+        <button id="loadBackupBtn" class="load-backup-btn">Load Backup</button>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kanban-board">
+        <div class="kanban-column" id="new-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>New</h2>
+            <ul class="task-list" id="new-tasks"></ul>
+        </div>
+
+        <div class="kanban-column" id="pending-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Pending</h2>
+            <ul class="task-list" id="pending-tasks"></ul>
+        </div>
+
+        <div class="kanban-column" id="completed-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Completed</h2>
+            <ul class="task-list" id="completed-tasks"></ul>
+        </div>
+
+        <div class="kanban-column" id="scheduled-column" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Scheduled</h2>
+            <ul class="task-list" id="scheduled-tasks"></ul>
+        </div>
+    </div>
+
+    <!-- Task Creation Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Task</h2>
+            <div class="input-group">
+                <label for="new-task-input">Task Title</label>
+                <input type="text" id="new-task-input" placeholder="Enter task title...">
+            </div>
+            <div class="input-group">
+                <label for="new-task-content">Task Description</label>
+                <textarea id="new-task-content" placeholder="Enter task description..." rows="3"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="task-tags">Select Tag</label>
+                <div class="tag-selector">
+                    <div class="tag-option" data-tag="apisys">
+                        <span class="tag-color apisys"></span>
+                        <span class="tag-name">Apisys</span>
+                    </div>
+                    <div class="tag-option" data-tag="cash">
+                        <span class="tag-color cash"></span>
+                        <span class="tag-name">现金 Cash</span>
+                    </div>
+                    <div class="tag-option" data-tag="credit">
+                        <span class="tag-color credit"></span>
+                        <span class="tag-name">信用 Credit</span>
+                    </div>
+                    <div class="tag-option" data-tag="lottery">
+                        <span class="tag-color lottery"></span>
+                        <span class="tag-name">开奖网</span>
+                    </div>
+                    <div class="tag-option" data-tag="grafana">
+                        <span class="tag-color grafana"></span>
+                        <span class="tag-name">Grafana</span>
+                    </div>
+                    <div class="tag-option" data-tag="other">
+                        <span class="tag-color other"></span>
+                        <span class="tag-name">其他</span>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="new-task-file">Attachment</label>
+                <div class="file-upload">
+                    <input type="file" id="new-task-file">
+                    <label for="new-task-file" class="file-label">
+                        <span class="file-icon">📎</span>
+                        <span class="file-text">Choose a file</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="create-btn" onclick="addTask('New')">Create Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <br>
+        <p>交接小工具 | Yialex@2024</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
