@@ -1,5 +1,8 @@
 # Kanban Ticket Management Tool
 
+## Demo (No save function for demo version)
+kanban.yialexlee.com
+
 ## Setup
 ```
 npm init -y
