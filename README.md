@@ -1,7 +1,7 @@
 # Kanban Ticket Management Tool
 
 ## Demo (No save function for demo version)
-kanban.yialexlee.com
+https://kanban.yialexlee.com
 
 ## Setup
 ```
