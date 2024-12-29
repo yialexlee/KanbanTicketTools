@@ -227,7 +227,6 @@ h1 {
     font-size: 1.1rem;
     color: #4a4a4a;
     border: 1px solid #e0e0e0;
-    /* Add these properties for text wrapping */
     white-space: pre-wrap;       
     word-wrap: break-word;       
     overflow-wrap: break-word;   
@@ -294,7 +293,6 @@ h1 {
     box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }
 
-/* Update file attachment styles to ensure proper spacing */
 .task-content .file-attachment {
     margin-top: 12px;
     display: flex;
@@ -309,7 +307,7 @@ h1 {
 }
 
 .task-list {
-    list-style-type: none; /* This removes the dots */
+    list-style-type: none;
     padding: 0;
     margin: 0;
 }
@@ -727,21 +725,12 @@ h1 {
     .kanban-column:hover::-webkit-scrollbar {
         display: block !important;
     }
-    /* .kanban-column::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
-    }
-
-    .kanban-column::-webkit-scrollbar-thumb:hover {
-        background: rg
-        ba(0, 0, 0, 0.25);
-    } */
 
     /* Custom Scrollbar Styles */
 
     /* Webkit browsers (Chrome, Safari, Opera) */
 .kanban-column::-webkit-scrollbar {
-    width: 12px !important; /* Slightly wider for better visibility */
+    width: 12px !important; 
     background-color: transparent !important;
 }
 
@@ -814,14 +803,13 @@ body.dark-mode .kanban-column::-webkit-scrollbar-thumb {
     background-color: #357abd !important;
 }
 
-/* Ensure content causes scrolling */
 .task-list {
     min-height: 100%;
     width: 100%;
 }
 
 * {
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
+    -webkit-overflow-scrolling: touch;
 }
 
     .kanban-column:empty::after {
@@ -1021,7 +1009,7 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
     transition: all 0.3s ease;
     opacity: 0;
     transform: scale(0.9);
-    margin: 0; /* Remove default margins */
+    margin: 0; 
 }
 
 .task-item:hover .delete-task-btn {
@@ -1039,7 +1027,7 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
     transform: scale(1.1) !important;
 }
 
-/* Update task title container  */
+/* Task title container  */
 .task-header {
     display: flex;
     flex-direction: column;
@@ -1083,7 +1071,7 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
 .language-toggle {
     position: fixed;
     top: 20px;
-    right: 80px; /* Position it next to dark mode toggle */
+    right: 80px;
     width: 45px;
     height: 45px;
     border-radius: 50%;

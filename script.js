@@ -1,4 +1,3 @@
-// Get references to elements
 const newTasks = document.getElementById("new-tasks");
 const pendingTasks = document.getElementById("pending-tasks");
 const completedTasks = document.getElementById("completed-tasks");
@@ -68,7 +67,7 @@ document
 
 // Retrieve saved tasks from localStorage
 function loadTasks() {
-  // First check if we have a backup file stored
+  // First check if have backup file stored
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = ".json";
@@ -806,7 +805,7 @@ const backupManager = {
   },
 };
 
-// Function to handle file selection
+// Handle file selection
 function handleFileSelect() {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
@@ -1099,7 +1098,7 @@ function deleteTask(taskId, category) {
       taskElement.remove();
 
       console.log(`Task ${taskId} deleted from ${category}`);
-    }, 300); // Match this with CSS animation duration
+    }, 300); 
   } catch (error) {
     console.error("Error deleting task:", error);
     alert("Error deleting task: " + error.message);
