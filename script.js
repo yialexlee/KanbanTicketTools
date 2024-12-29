@@ -141,9 +141,12 @@ function addTask(category) {
     addTaskToColumn(task, category);
     saveTaskToLocalStorage(task);
     closeModal();
-  } else {
-    // alert("Please fill in all required fields and select a tag!");
+  }else if (!selectedTag && taskTitle == "" && taskText == "") {
+    alert("Ticket created successfully!");
+  }else {
+    alert("Please fill in all fields and select a tag!");
   }
+
   if (task.file) {
     const fileExtension = task.file.split(".").pop().toLowerCase();
     const fileType = getFileType(fileExtension);
@@ -241,8 +244,8 @@ function addTaskToColumn(task, category) {
   // Create view details button
   const viewDetailsBtn = document.createElement("button");
   viewDetailsBtn.classList.add("view-details-btn");
-  viewDetailsBtn.innerHTML = "👁️ View Details";
-  viewDetailsBtn.style.display = "none"; // Initially hidden
+  viewDetailsBtn.innerHTML = "👁️ Details";
+  viewDetailsBtn.style.display = "none";
   viewDetailsBtn.onclick = (e) => {
     e.stopPropagation();
     showTaskDetails(task, taskItem);
@@ -289,8 +292,9 @@ function addTaskToColumn(task, category) {
 
   taskItem.appendChild(taskHeader);
   taskItem.appendChild(taskContent);
-  taskItem.appendChild(viewDetailsBtn); // Add view details button
+  // taskItem.appendChild(viewDetailsBtn);
   taskItem.appendChild(taskDate);
+  taskItem.appendChild(viewDetailsBtn);
 
   // Add to appropriate column
   const taskList = document.getElementById(`${category.toLowerCase()}-tasks`);
@@ -860,9 +864,9 @@ function addTaskToColumn(task, category) {
   taskItem.dataset.category = category;
   const viewDetailsBtn = document.createElement("button");
   viewDetailsBtn.classList.add("view-details-btn");
-  viewDetailsBtn.innerHTML = "👁️ View Details";
+  viewDetailsBtn.innerHTML = "👁️View ";
 
-  // Add click handler for the button
+  // Click handler for the button
   viewDetailsBtn.addEventListener("click", function (e) {
     e.stopPropagation();
     console.log("View details clicked for task:", task.title);

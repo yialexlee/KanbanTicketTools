@@ -192,9 +192,9 @@ h1 {
     font-size: 1.2rem;
     font-weight: 600;
     color: #2c3e50;
-    padding-right: 30px; /* Make space for delete button */
+    padding-right: 30px;
     word-break: break-word;
-    margin: 0; /* Remove default margins */
+    margin: 0;
 }
 
 .task-tag {
@@ -330,9 +330,8 @@ h1 {
     }
 }
 
-/* Enhanced Date Styling */
 .task-date {
-    font-size: 0.75rem; /* Smaller text */
+    font-size: 0.75rem;
     color: #8c8c8c;
     display: flex;
     align-items: center;
@@ -381,7 +380,7 @@ h1 {
 /* Modal Styles */
 .modal {
     display: none;
-    position: fixed;
+    position: absolute;
     z-index: 1000;
     left: 0;
     top: 0;
@@ -1118,17 +1117,18 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
     position: absolute;
     bottom: 10px;
     right: 10px;
+    bottom:5px;
     background-color: #4a90e2;
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 0.9rem;
+    padding: 3px 6px;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
     opacity: 0;
     z-index: 2;
-    padding-bottom: 8px;
+    /* padding-bottom: 8px; */
 }
 
 .task-item:hover .view-details-btn {
@@ -1214,12 +1214,12 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
 .task-detail-content .close {
     position: absolute;
     top: 25px;
-    right: 40px;
+    right: 180px;
     font-size: 50px;
     color: #666;
     cursor: pointer;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
