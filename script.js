@@ -191,170 +191,338 @@ function addTaskToColumn(task, category) {
   const taskItem = document.createElement("li");
   taskItem.classList.add("task-item");
   taskItem.draggable = true;
-  taskItem.id = `task-${task.id}`;
+  taskItem.id = `task-${task.id || Date.now()}`;
   taskItem.dataset.category = category;
+
+  // Create task header container
+  const taskHeader = document.createElement("div");
+  taskHeader.classList.add("task-header");
+
+  // Create title container
+  const taskTitleContainer = document.createElement("div");
+  taskTitleContainer.classList.add("task-title-container");
 
   // Add the task title
   const taskTitle = document.createElement("div");
   taskTitle.classList.add("task-title");
   taskTitle.innerText = task.title;
 
+  // Create delete button
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("delete-task-btn");
+  deleteButton.innerHTML = "×";
+  deleteButton.title = "Delete task";
+  deleteButton.onclick = (e) => {
+    e.stopPropagation();
+    deleteTask(task.id || taskItem.id.replace("task-", ""), category);
+  };
+
   // Add tag to the task item
   const taskTag = document.createElement("span");
   taskTag.classList.add("task-tag");
   taskTag.classList.add(task.tag);
-  taskTag.textContent = document.querySelector(
-    `[data-tag="${task.tag}"] .tag-name`
-  ).textContent;
+  taskTag.textContent =
+    document.querySelector(`[data-tag="${task.tag}"] .tag-name`)?.textContent ||
+    task.tag;
 
-  // Add content (initially hidden)
+  // Add content
   const taskContent = document.createElement("div");
   taskContent.classList.add("task-content");
 
+  // Create content wrapper
+  const contentWrapper = document.createElement("div");
+  contentWrapper.classList.add("content-wrapper");
+
   const contentParagraph = document.createElement("p");
   contentParagraph.textContent = task.content;
-  taskContent.appendChild(contentParagraph);
+  contentWrapper.appendChild(contentParagraph);
+  taskContent.appendChild(contentWrapper);
 
-  // Add click event for editing content
-  contentParagraph.addEventListener("click", (e) => {
+  // Create view details button
+  const viewDetailsBtn = document.createElement("button");
+  viewDetailsBtn.classList.add("view-details-btn");
+  viewDetailsBtn.innerHTML = "👁️ View Details";
+  viewDetailsBtn.style.display = "none"; // Initially hidden
+  viewDetailsBtn.onclick = (e) => {
     e.stopPropagation();
+    showTaskDetails(task, taskItem);
+  };
 
-    // Create textarea
-    const textarea = document.createElement("textarea");
-    textarea.value = task.content;
-    textarea.style.height = Math.max(100, contentParagraph.offsetHeight) + "px";
-
-    // Replace paragraph with textarea
-    taskContent.classList.add("editing");
-    contentParagraph.replaceWith(textarea);
-    textarea.focus();
-
-    const saveChanges = () => {
-      const newContent = textarea.value.trim();
-      task.content = newContent;
-      contentParagraph.textContent = newContent;
-      taskContent.classList.remove("editing");
-      textarea.replaceWith(contentParagraph);
-      saveTaskToLocalStorage(task);
-    };
-
-    // Save on blur
-    textarea.addEventListener("blur", saveChanges);
-
-    // Save on Enter (but allow multiline with Shift+Enter)
-    textarea.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        textarea.blur();
-      }
-    });
+  // Add hover effect for task item
+  taskItem.addEventListener("mouseenter", () => {
+    viewDetailsBtn.style.display = "block";
+    viewDetailsBtn.style.opacity = "1";
   });
 
+  taskItem.addEventListener("mouseleave", () => {
+    viewDetailsBtn.style.opacity = "0";
+    setTimeout(() => {
+      if (!taskItem.matches(":hover")) {
+        viewDetailsBtn.style.display = "none";
+      }
+    }, 300);
+  });
+
+  // Add file attachment if exists
   if (task.file) {
-    taskContent.innerHTML += `<a href="${task.file}" target="_blank" class="file-attachment">
-            <span class="file-icon">📎</span>
-            <span>View Attachment</span>
-        </a>`;
+    const fileAttachment = document.createElement("a");
+    fileAttachment.href = task.file;
+    fileAttachment.target = "_blank";
+    fileAttachment.classList.add("file-attachment");
+    fileAttachment.innerHTML = `
+          <span class="file-icon">📎</span>
+          <span>View Attachment</span>
+      `;
+    taskContent.appendChild(fileAttachment);
   }
 
   // Add creation date
   const taskDate = document.createElement("div");
   taskDate.classList.add("task-date");
-  taskDate.innerText = new Date(task.createdAt).toLocaleString();
+  taskDate.innerText = new Date(task.createdAt || Date.now()).toLocaleString();
 
-  // Show content on hover
-  taskTitle.addEventListener("mouseenter", () => {
-    taskContent.classList.add("show");
-  });
+  // Assemble the task item
+  taskTitleContainer.appendChild(taskTag);
+  taskTitleContainer.appendChild(taskTitle);
+  taskHeader.appendChild(taskTitleContainer);
+  taskHeader.appendChild(deleteButton);
 
-  // Toggle content on click
-  taskTitle.addEventListener("click", () => {
-    taskContent.classList.toggle("show");
-  });
-
-  // Enable content editing on click
-  taskContent.addEventListener("click", (e) => {
-    if (e.target.tagName !== "A") {
-      // Prevent editing when clicking the file link
-      const contentText = taskContent.querySelector("p");
-      const editText = document.createElement("textarea");
-      editText.value = contentText.innerText;
-      taskContent.innerHTML = "";
-      taskContent.appendChild(editText);
-      editText.focus();
-
-      editText.addEventListener("blur", () => {
-        const updatedContent = editText.value.trim();
-        task.content = updatedContent;
-        contentText.innerText = updatedContent;
-        taskContent.innerHTML = `<p>${updatedContent}</p>`;
-        if (task.file) {
-          taskContent.innerHTML += `<a href="${task.file}" target="_blank" class="file-attachment">
-                        <span class="file-icon">📎</span>
-                        <span>View Attachment</span>
-                    </a>`;
-        }
-        saveTaskToLocalStorage(task);
-      });
-    }
-  });
-
-  // Handle content visibility
-  taskItem.addEventListener("mouseenter", () => {
-    if (!taskContent.classList.contains("editing")) {
-      taskContent.classList.add("show");
-    }
-  });
-
-  taskItem.addEventListener("mouseleave", (e) => {
-    // Check if we're not currently editing
-    if (!taskContent.classList.contains("editing")) {
-      // Check if the related target is not a child of the task item
-      if (!taskItem.contains(e.relatedTarget)) {
-        taskContent.classList.remove("show");
-      }
-    }
-  });
-
-  // Prevent hiding content while editing
-  taskContent.addEventListener("click", (e) => {
-    if (taskContent.classList.contains("editing")) {
-      e.stopPropagation();
-    }
-  });
-
-  // Add drag events
-  taskItem.addEventListener("dragstart", (e) => {
-    e.dataTransfer.setData("taskId", task.id);
-    taskItem.classList.add("dragging");
-  });
-
-  taskItem.addEventListener("dragend", () => {
-    taskItem.classList.remove("dragging");
-  });
-
-  // Append elements to task item
-  taskItem.appendChild(taskTag);
-  taskItem.appendChild(taskTitle);
+  taskItem.appendChild(taskHeader);
   taskItem.appendChild(taskContent);
+  taskItem.appendChild(viewDetailsBtn); // Add view details button
   taskItem.appendChild(taskDate);
 
-  // Append to appropriate column
-  switch (category) {
-    case "New":
-      newTasks.appendChild(taskItem);
-      break;
-    case "Pending":
-      pendingTasks.appendChild(taskItem);
-      break;
-    case "Completed":
-      completedTasks.appendChild(taskItem);
-      break;
-    case "Scheduled":
-      scheduledTasks.appendChild(taskItem);
-      break;
+  // Add to appropriate column
+  const taskList = document.getElementById(`${category.toLowerCase()}-tasks`);
+  if (taskList) {
+    taskList.appendChild(taskItem);
   }
 }
+
+// function showTaskDetails(task, taskItem) {
+//   // Create modal container
+//   const modal = document.createElement("div");
+//   modal.classList.add("task-detail-modal");
+//   modal.style.display = "block";
+
+//   // Create modal content
+//   modal.innerHTML = `
+//       <div class="task-detail-content">
+//           <span class="close">&times;</span>
+//           <h2>${task.title}</h2>
+//           <div class="task-tag ${task.tag}">
+//               ${
+//                 document.querySelector(`[data-tag="${task.tag}"] .tag-name`)
+//                   ?.textContent || task.tag
+//               }
+//           </div>
+//           <div class="content-wrapper">
+//               <p class="editable-content">${task.content}</p>
+//           </div>
+//           ${
+//             task.file
+//               ? `
+//               <a href="${task.file}" target="_blank" class="file-attachment">
+//                   <span class="file-icon">📎</span>
+//                   <span>View Attachment</span>
+//               </a>
+//           `
+//               : ""
+//           }
+//           <div class="task-date">
+//               Created: ${new Date(
+//                 task.createdAt || Date.now()
+//               ).toLocaleString()}
+//           </div>
+//       </div>
+//   `;
+
+//   // Add modal to document
+//   document.body.appendChild(modal);
+
+//   // Handle close button
+//   const closeBtn = modal.querySelector(".close");
+//   closeBtn.onclick = () => {
+//     modal.remove();
+//   };
+
+//   // Handle click outside modal
+//   modal.onclick = (e) => {
+//     if (e.target === modal) {
+//       modal.remove();
+//     }
+//   };
+
+//   // Make content editable
+//   const contentElement = modal.querySelector(".editable-content");
+//   contentElement.onclick = (e) => {
+//     e.stopPropagation();
+//     const textarea = document.createElement("textarea");
+//     textarea.value = task.content;
+//     textarea.classList.add("content-editor");
+//     contentElement.replaceWith(textarea);
+//     textarea.focus();
+
+//     textarea.onblur = () => {
+//       const newContent = textarea.value.trim();
+//       if (newContent !== task.content) {
+//         task.content = newContent;
+//         contentElement.textContent = newContent;
+//         taskItem.querySelector(".task-content p").textContent = newContent;
+//         saveTaskToLocalStorage(task);
+//       }
+//       textarea.replaceWith(contentElement);
+//     };
+//   };
+// }
+
+function showTaskDetails(task, taskItem) {
+  const modal = document.createElement("div");
+  modal.classList.add("task-detail-modal");
+
+  // Create modal content
+  modal.innerHTML = `
+      <div class="task-detail-content">
+          <span class="close">&times;</span>
+          <div class="detail-header">
+              <h2>${task.title}</h2>
+              <div class="task-tag ${task.tag}">
+                  ${
+                    document.querySelector(`[data-tag="${task.tag}"] .tag-name`)
+                      ?.textContent || task.tag
+                  }
+              </div>
+          </div>
+          <div class="content-wrapper">
+              <p class="editable-content">${task.content}</p>
+          </div>
+          ${
+            task.file
+              ? `
+              <a href="${task.file}" target="_blank" class="file-attachment">
+                  <span class="file-icon">📎</span>
+                  <span>View Attachment</span>
+              </a>
+          `
+              : ""
+          }
+          <div class="task-date">
+              <span>🕒</span>
+              <span>Created: ${new Date(
+                task.createdAt || Date.now()
+              ).toLocaleString()}</span>
+          </div>
+      </div>
+  `;
+
+  // Add modal to document
+  document.body.appendChild(modal);
+
+  // Force reflow to ensure proper animation
+  modal.offsetHeight;
+
+  // Show modal
+  modal.style.display = "flex";
+
+  // Handle close button
+  const closeBtn = modal.querySelector(".close");
+  closeBtn.onclick = () => {
+    modal.style.opacity = "0";
+    setTimeout(() => modal.remove(), 300);
+  };
+
+  // Handle outside click
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.style.opacity = "0";
+      setTimeout(() => modal.remove(), 300);
+    }
+  };
+
+  // Handle content editing
+  const contentElement = modal.querySelector(".editable-content");
+  contentElement.onclick = (e) => {
+    e.stopPropagation();
+    const textarea = document.createElement("textarea");
+    textarea.classList.add("content-editor");
+    textarea.value = task.content;
+    contentElement.replaceWith(textarea);
+    textarea.focus();
+
+    textarea.onblur = () => {
+      const newContent = textarea.value.trim();
+      if (newContent !== task.content) {
+        task.content = newContent;
+        contentElement.textContent = newContent;
+        taskItem.querySelector(".task-content p").textContent = newContent;
+        saveTaskToLocalStorage(task);
+      }
+      textarea.replaceWith(contentElement);
+    };
+  };
+}
+
+const additionalStyles = `
+  .task-detail-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+
+  .task-detail-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .task-detail-content .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 24px;
+  }
+
+  .task-detail-content .editable-content {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      cursor: text;
+  }
+
+  .task-detail-content .editable-content:hover {
+      background-color: #f5f5f5;
+  }
+
+  .content-editor {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: inherit;
+  }
+`;
+
+// Add the styles to the document
+const styleSheet = document.createElement("style");
+styleSheet.textContent = additionalStyles;
+document.head.appendChild(styleSheet);
 
 // Save task to localStorage
 function saveTaskToLocalStorage(task) {
@@ -455,16 +623,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function autoLoadNewestJSON() {
   try {
-      const response = await fetch('/get-latest-backup');
-      if (response.ok) {
-          const data = await response.json();
-          backupManager.restoreFromData(data);
-          console.log('Backup loaded successfully');
-      } else {
-          throw new Error('Failed to load backup');
-      }
+    const response = await fetch("/get-latest-backup");
+    if (response.ok) {
+      const data = await response.json();
+      backupManager.restoreFromData(data);
+      console.log("Backup loaded successfully");
+    } else {
+      throw new Error("Failed to load backup");
+    }
   } catch (error) {
-      console.log('No existing backup found or error loading it:', error);
+    console.log("No existing backup found or error loading it:", error);
   }
 }
 
@@ -504,53 +672,53 @@ const backupManager = {
 
   saveToJSON() {
     try {
-        const data = {
-            metadata: {
-                timestamp: new Date().toISOString(),
-                author: "yialexlee",
-                version: "1.0",
-            },
-            tasks: {},
-            settings: {
-                darkMode: localStorage.getItem("darkMode"),
-            },
-        };
+      const data = {
+        metadata: {
+          timestamp: new Date().toISOString(),
+          author: "yialexlee",
+          version: "1.0",
+        },
+        tasks: {},
+        settings: {
+          darkMode: localStorage.getItem("darkMode"),
+        },
+      };
 
-        // Get all tasks from localStorage
-        categories.forEach((category) => {
-            const tasksString = localStorage.getItem(category);
-            data.tasks[category] = tasksString ? JSON.parse(tasksString) : [];
-        });
+      // Get all tasks from localStorage
+      categories.forEach((category) => {
+        const tasksString = localStorage.getItem(category);
+        data.tasks[category] = tasksString ? JSON.parse(tasksString) : [];
+      });
 
-        // Send to server
-        fetch('/save-backup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
+      // Send to server
+      fetch("/save-backup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.success) {
+            console.log("Backup saved successfully");
+          } else {
+            throw new Error(result.error || "Failed to save backup");
+          }
         })
-        .then(response => response.json())
-        .then(result => {
-            if (result.success) {
-                console.log('Backup saved successfully');
-            } else {
-                throw new Error(result.error || 'Failed to save backup');
-            }
-        })
-        .catch(error => {
-            console.error('Error saving backup:', error);
-            // Fallback to download if server save fails
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-            this.fallbackDownload(blob);
+        .catch((error) => {
+          console.error("Error saving backup:", error);
+          // Fallback to download if server save fails
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: "application/json",
+          });
+          this.fallbackDownload(blob);
         });
-
     } catch (error) {
-        console.error("Error creating backup:", error);
-        alert("Error creating backup: " + error.message);
+      console.error("Error creating backup:", error);
+      alert("Error creating backup: " + error.message);
     }
-},
-
+  },
 
   // Load data from JSON file
   loadFromJSON(file) {
@@ -690,6 +858,16 @@ function addTaskToColumn(task, category) {
   taskItem.draggable = true;
   taskItem.id = `task-${task.id || Date.now()}`;
   taskItem.dataset.category = category;
+  const viewDetailsBtn = document.createElement("button");
+  viewDetailsBtn.classList.add("view-details-btn");
+  viewDetailsBtn.innerHTML = "👁️ View Details";
+
+  // Add click handler for the button
+  viewDetailsBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    console.log("View details clicked for task:", task.title);
+    showTaskDetails(task, taskItem);
+  });
 
   // Create task header container
   const taskHeader = document.createElement("div");
@@ -827,6 +1005,7 @@ function addTaskToColumn(task, category) {
 
   taskItem.appendChild(taskHeader);
   taskItem.appendChild(taskContent);
+  taskItem.appendChild(viewDetailsBtn);
   taskItem.appendChild(taskDate);
 
   // Append to appropriate column
@@ -923,23 +1102,23 @@ function deleteTask(taskId, category) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  const languageToggle = document.getElementById('languageToggle');
-  
-  if (languageToggle) {
-      // Set initial tooltip
-      const currentPage = window.location.pathname.split('/').pop();
-      languageToggle.title = currentPage === 'index-c.html' ? 
-          'English' : 'Chinese';
+document.addEventListener("DOMContentLoaded", function () {
+  const languageToggle = document.getElementById("languageToggle");
 
-      languageToggle.addEventListener('click', () => {
-          const currentPage = window.location.pathname.split('/').pop();
-          if (currentPage === 'index-c.html') {
-              window.location.href = 'index.html';
-          } else {
-              window.location.href = 'index-c.html';
-          }
-      });
+  if (languageToggle) {
+    // Set initial tooltip
+    const currentPage = window.location.pathname.split("/").pop();
+    languageToggle.title =
+      currentPage === "index-c.html" ? "English" : "Chinese";
+
+    languageToggle.addEventListener("click", () => {
+      const currentPage = window.location.pathname.split("/").pop();
+      if (currentPage === "index-c.html") {
+        window.location.href = "index.html";
+      } else {
+        window.location.href = "index-c.html";
+      }
+    });
   }
 
   // Auto load newest JSON file when page loads
