@@ -1106,7 +1106,7 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
     bottom: 10px;
     right: 10px;
     bottom:5px;
-    background-color: #4a90e2;
+    background-color: #5a626d;
     color: white;
     border: none;
     border-radius: 6px;
@@ -1124,9 +1124,9 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
 }
 
 .view-details-btn:hover {
-    background-color: #357abd;
+    background-color: #313942;
     transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+    box-shadow: 0 2px 8px rgba(29, 28, 28, 0.3);
 }
 
 /* Popup Modal for Task Details */
