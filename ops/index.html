@@ -121,6 +121,19 @@
         if (username === null || username === undefined || username !== 'Ops') {
             window.location.href = '../login.html';
         }
+
+        var idex = 0;
+    jQuery(document).ready(function($) {
+        $("body").click(function(e) {
+            var key = new Array("☆","★","✧","✵","⚝","✫",);
+            var $i = $("<span></span>").text(key[idex]);
+            idex = Math.floor(Math.random()*5);
+            var x = e.pageX, y = e.pageY;
+            $i.css({"z-index": 5201314,"top": y- 20,"left": x,"position": "absolute","font-weight": "bold","font-size": "30px","color": "rgb("+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+","+Math.floor(Math.random()*255)+")"});
+            $("body").append($i);
+            $i.animate({"top": y - 70,"left": x+90,"font-size": 20,"opacity": 0},15*100,function() {$i.remove();});
+        });
+    });
     </script>
 </body>
 </html>

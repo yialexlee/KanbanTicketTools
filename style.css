@@ -1,3 +1,6 @@
+body{
+  cursor: url('/images/cursor.png'),auto;
+}
 .login-dark {
     height:1000px;
     background:#475d62 url(/images/star-sky.jpg);
