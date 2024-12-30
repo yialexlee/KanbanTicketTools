@@ -1,13 +1,13 @@
 # Kanban Ticket Management Tool
 
-## Demo (No save function for demo version)
-https://kanban.yialexlee.com
-
 ## Setup
 ```
 npm init -y
 npm install express
+npm install jsonwebtoken
 ```
+
+Then at server.js and login.html, config the username
 
 ## Run
 ```
