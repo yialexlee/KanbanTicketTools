@@ -1134,7 +1134,7 @@ body.dark-mode .dark-mode-toggle .toggle-icon {
     transition: transform 0.5s ease;
 }
 
-.logout-toggle:hover .language-icon {
+.logout-toggle:hover .logout-icon {
     transform: rotate(360deg);
 }
 

@@ -1123,7 +1123,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Set initial tooltip
     const currentPage = window.location.pathname.split("/").pop();
     languageToggle.title =
-      currentPage === "index-c.html" ? "English" : "Chinese";
+      currentPage === "index-c.html" ? "切换到英文" : "Switch to English";
 
     languageToggle.addEventListener("click", () => {
       const currentPage = window.location.pathname.split("/").pop();
