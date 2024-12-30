@@ -2,10 +2,43 @@ const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const app = express();
+const JWT = require("jsonwebtoken");
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 app.use(express.json({ limit: '50mb' }));
+
+//Login endpoint
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+try {
+  
+      if (username == "Ops" && password == "Ops") {
+  
+        const token = await JWT.sign(
+            {
+              expiresIn: "7d",
+              username: username,
+            },
+            "NZz58bsIo3d3XPZsfN0NOm92z9FMfnKgXwovR9fp6ryDIoGRM8HuHLB6i9sc0ig"
+          );
+  
+          const key = username;
+  
+          res.setHeader("x-auth-token", token);
+  
+          res.json({ success: true, message: "Login successful!", token: token });
+          console.log("Login successful!");
+        } else {
+            res.json({ success: false, message: "Invalid username or password." });
+            console.log("Invalid username or password.");
+          }
+      } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 
 // Endpoint to save backup
 app.post('/save-backup', async (req, res) => {
@@ -33,7 +66,7 @@ app.get('/get-latest-backup', async (req, res) => {
 
 // Serve index.html for the root path
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
 
 // Set port
