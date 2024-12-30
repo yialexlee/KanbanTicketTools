@@ -7,6 +7,8 @@ npm install express
 npm install jsonwebtoken
 ```
 
+Then at server.js and login.html, config the username
+
 ## Run
 ```
 node server.js
